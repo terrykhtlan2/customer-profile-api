@@ -1,0 +1,62 @@
+openapi: 3.0.0
+info:
+  title: Customer Profile API
+  version: 1.0.0
+  description: API to retrieve unified customer profile data.
+
+# 1. THE PATH (The "Where")
+paths:
+  /customers/{customerId}:
+    get:
+      summary: Get customer profile by ID
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          description: Unique UUID of the customer
+          schema:
+            type: string
+            format: uuid
+        - name: X-Correlation-ID
+          in: header
+          required: true
+          description: Unique ID for log tracing (Splunk)
+          schema:
+            type: string
+
+      # 2. THE RESPONSE (The "What")
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerProfile'
+
+# 3. THE DATA MODEL (The "Variables")
+components:
+  schemas:
+    CustomerProfile:
+      type: object
+      required:
+        - customerId
+        - fullName
+        - emailAddress
+        - status
+      properties:
+        customerId:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        fullName:
+          type: string
+          example: "Terry K."
+        emailAddress:
+          type: string
+          format: email
+          example: "terry@example.com"
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE]
+        lastLogin:
+          type: string
+          format: date-time
